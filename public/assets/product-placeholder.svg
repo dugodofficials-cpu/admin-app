@@ -1,0 +1,36 @@
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Dark background -->
+    <rect width="400" height="400" fill="#111111"/>
+    
+    <!-- Grid pattern for visual interest -->
+    <path d="M0 40H400" stroke="#222222" stroke-width="1"/>
+    <path d="M0 80H400" stroke="#222222" stroke-width="1"/>
+    <path d="M0 120H400" stroke="#222222" stroke-width="1"/>
+    <path d="M0 160H400" stroke="#222222" stroke-width="1"/>
+    <path d="M0 200H400" stroke="#222222" stroke-width="1"/>
+    <path d="M0 240H400" stroke="#222222" stroke-width="1"/>
+    <path d="M0 280H400" stroke="#222222" stroke-width="1"/>
+    <path d="M0 320H400" stroke="#222222" stroke-width="1"/>
+    <path d="M0 360H400" stroke="#222222" stroke-width="1"/>
+    
+    <path d="M40 0V400" stroke="#222222" stroke-width="1"/>
+    <path d="M80 0V400" stroke="#222222" stroke-width="1"/>
+    <path d="M120 0V400" stroke="#222222" stroke-width="1"/>
+    <path d="M160 0V400" stroke="#222222" stroke-width="1"/>
+    <path d="M200 0V400" stroke="#222222" stroke-width="1"/>
+    <path d="M240 0V400" stroke="#222222" stroke-width="1"/>
+    <path d="M280 0V400" stroke="#222222" stroke-width="1"/>
+    <path d="M320 0V400" stroke="#222222" stroke-width="1"/>
+    <path d="M360 0V400" stroke="#222222" stroke-width="1"/>
+    
+    <!-- Product icon -->
+    <path d="M200 120C180 120 164 136 164 156C164 176 180 192 200 192C220 192 236 176 236 156C236 136 220 120 200 120ZM200 180C186.8 180 176 169.2 176 156C176 142.8 186.8 132 200 132C213.2 132 224 142.8 224 156C224 169.2 213.2 180 200 180Z" fill="#333333"/>
+    <path d="M200 144C193.6 144 188 149.6 188 156C188 162.4 193.6 168 200 168C206.4 168 212 162.4 212 156C212 149.6 206.4 144 200 144Z" fill="#333333"/>
+    
+    <!-- Text placeholders -->
+    <rect x="120" y="240" width="160" height="12" rx="2" fill="#333333"/>
+    <rect x="140" y="264" width="120" height="8" rx="2" fill="#222222"/>
+    
+    <!-- Border -->
+    <rect x="1" y="1" width="398" height="398" rx="7" stroke="#222222" stroke-width="2"/>
+</svg> 

@@ -1,0 +1,119 @@
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/font/Satoshi-Regular.woff2') format('woff2'),
+    url('/font/Satoshi-Regular.woff') format('woff'),
+    url('/font/Satoshi-Regular.ttf') format('truetype'),
+    url('/font/Satoshi-Regular.eot') format('embedded-opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/font/Satoshi-Medium.woff2') format('woff2'),
+    url('/font/Satoshi-Medium.woff') format('woff'),
+    url('/font/Satoshi-Medium.ttf') format('truetype'),
+    url('/font/Satoshi-Medium.eot') format('embedded-opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/font/Satoshi-Bold.woff2') format('woff2'),
+    url('/font/Satoshi-Bold.woff') format('woff'),
+    url('/font/Satoshi-Bold.ttf') format('truetype'),
+    url('/font/Satoshi-Bold.eot') format('embedded-opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ClashDisplay';
+  src: url('/font/ClashDisplay-Regular.woff2') format('woff2'),
+    url('/font/ClashDisplay-Regular.woff') format('woff'),
+    url('/font/ClashDisplay-Regular.ttf') format('truetype'),
+    url('/font/ClashDisplay-Regular.eot') format('embedded-opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ClashDisplay';
+  src: url('/font/ClashDisplay-Medium.woff2') format('woff2'),
+    url('/font/ClashDisplay-Medium.woff') format('woff'),
+    url('/font/ClashDisplay-Medium.ttf') format('truetype'),
+    url('/font/ClashDisplay-Medium.eot') format('embedded-opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ClashDisplay';
+  src: url('/font/ClashDisplay-Semibold.woff2') format('woff2'),
+    url('/font/ClashDisplay-Semibold.woff') format('woff'),
+    url('/font/ClashDisplay-Semibold.ttf') format('truetype'),
+    url('/font/ClashDisplay-Semibold.eot') format('embedded-opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ClashDisplay';
+  src: url('/font/ClashDisplay-Bold.woff2') format('woff2'),
+    url('/font/ClashDisplay-Bold.woff') format('woff'),
+    url('/font/ClashDisplay-Bold.ttf') format('truetype'),
+    url('/font/ClashDisplay-Bold.eot') format('embedded-opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'ClashDisplay', 'Satoshi', Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}

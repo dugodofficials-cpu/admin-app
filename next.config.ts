@@ -1,8 +1,57 @@
 import type { NextConfig } from 'next';
 
+const DEFAULT_API_URL = 'https://api.dugodofficial.com';
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0']);
+
+const resolveApiBaseUrl = () => {
+  const candidate = process.env.NEXT_PUBLIC_API_URL;
+  const isProd = process.env.NODE_ENV === 'production';
+
+  if (!candidate) {
+    return DEFAULT_API_URL;
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(candidate);
+  } catch (error) {
+    return DEFAULT_API_URL;
+  }
+
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    return DEFAULT_API_URL;
+  }
+
+  const isLocal = LOCAL_HOSTS.has(parsed.hostname);
+  const appCandidate = process.env.NEXT_PUBLIC_APP_URL || (isProd ? 'https://admin.dugodofficial.com' : '');
+
+  if (isProd && (isLocal || parsed.hostname === 'admin.dugodofficial.com')) {
+    return DEFAULT_API_URL;
+  }
+
+  if (appCandidate) {
+    try {
+      const appHost = new URL(appCandidate).hostname;
+      if (parsed.hostname === appHost) {
+        return DEFAULT_API_URL;
+      }
+    } catch (error) {
+      return DEFAULT_API_URL;
+    }
+  }
+
+  if (isProd && parsed.protocol !== 'https:' && !isLocal) {
+    return DEFAULT_API_URL;
+  }
+
+  return parsed.origin;
+};
+
+const apiUrl = resolveApiBaseUrl();
+const apiHost = new URL(apiUrl).hostname;
+
 const nextConfig: NextConfig = {
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.dugodofficial.com';
     return [
       {
         source: '/api/:path*',
@@ -15,8 +64,7 @@ const nextConfig: NextConfig = {
       new URL('http://127.0.0.1/assets/**'),
       {
         protocol: 'https',
-        hostname:
-          process.env.NEXT_PUBLIC_API_URL?.replace(/^https?:\/\//, '') || 'dugodofficial.com',
+        hostname: apiHost,
       },
       {
         protocol: 'https',
@@ -28,7 +76,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'dugod-media.s3.eu-north-1.amazonaws.com',
+        hostname: 'dugodofficial-media.s3.eu-north-1.amazonaws.com',
       },
       {
         protocol: 'https',
@@ -36,7 +84,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'dugod-public.s3.eu-north-1.amazonaws.com',
+        hostname: 'dugodofficial-public.s3.eu-north-1.amazonaws.com',
       },
       {
         protocol: 'http',
@@ -50,7 +98,7 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
   productionBrowserSourceMaps: false,
 };
 

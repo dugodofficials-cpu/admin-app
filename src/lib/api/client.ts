@@ -25,7 +25,7 @@ const resolveApiBaseUrl = () => {
   let parsed: URL;
   try {
     parsed = new URL(candidate);
-  } catch (error) {
+  } catch {
     return isBrowser && isProd ? '/api' : DEFAULT_API_URL;
   }
 
@@ -36,7 +36,7 @@ const resolveApiBaseUrl = () => {
   if (appCandidate) {
     try {
       appHost = new URL(appCandidate).hostname;
-    } catch (error) {
+    } catch {
       appHost = null;
     }
   }

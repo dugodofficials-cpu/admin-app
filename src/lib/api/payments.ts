@@ -28,7 +28,7 @@ export type CryptoPayment = {
     cryptoCurrency?: string;
     cryptoAddress?: string;
   };
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 };
 
 export type GetProcessingCryptoPaymentsResponse = {

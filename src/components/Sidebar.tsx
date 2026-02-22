@@ -17,6 +17,7 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import DiscountIcon from '@mui/icons-material/Discount';
 import PeopleIcon from '@mui/icons-material/People';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -42,6 +43,11 @@ const menuItems = [
     href: ROUTES.DASHBOARD.COUPONS.HOME,
   },
   { text: 'Orders', icon: <ShoppingCartIcon />, href: ROUTES.DASHBOARD.ORDERS },
+  {
+    text: 'Crypto Payments',
+    icon: <CurrencyBitcoinIcon />,
+    href: ROUTES.DASHBOARD.CRYPTO_PAYMENTS,
+  },
   {
     text: 'Shipping Zones',
     icon: <LocationOnIcon />,

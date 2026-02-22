@@ -4,6 +4,7 @@ export const ROUTES = {
     USERS: '/users',
     SETTINGS: '/settings',
     ORDERS: '/orders',
+    CRYPTO_PAYMENTS: '/crypto-payments',
     MUSIC_MANAGER: {
       HOME: '/music-manager',
       ADD_SINGLE: '/music-manager/add-single',

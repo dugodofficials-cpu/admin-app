@@ -51,6 +51,10 @@ const apiUrl = resolveApiBaseUrl();
 const apiHost = new URL(apiUrl).hostname;
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_BUILD_SHA:
+      process.env.VERCEL_GIT_COMMIT_SHA || process.env.GIT_COMMIT_SHA || 'unknown',
+  },
   async rewrites() {
     return [
       {

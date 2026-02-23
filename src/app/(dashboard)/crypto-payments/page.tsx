@@ -28,6 +28,13 @@ const statusColors: Record<PaymentStatus, string> = {
   [PaymentStatus.CANCELLED]: '#FF0000',
 };
 
+const formatPaymentDate = (value?: string) => {
+  if (!value) return '—';
+  const parsed = dayjs(value);
+  if (!parsed.isValid()) return '—';
+  return parsed.format('DD/MM/YYYY HH:mm');
+};
+
 export default function CryptoPaymentsPage() {
   const { data, isLoading, error } = useProcessingCryptoPayments();
   const reviewMutation = useReviewCryptoPayment();
@@ -104,10 +111,12 @@ export default function CryptoPaymentsPage() {
                   const initiatedAt = p.initiatedAt || p.createdAt;
                   const userEmail = p.user?.email || 'Unknown';
                   const orderNumber = p.order?.orderNumber || p.order?._id || 'N/A';
+                  const status = p.status as PaymentStatus | undefined;
+                  const statusColor = status ? statusColors[status] : '#6B7280';
 
                   return (
                     <TableRow key={p._id} hover>
-                      <TableCell>{initiatedAt ? dayjs(initiatedAt).format('DD/MM/YYYY HH:mm') : '—'}</TableCell>
+                      <TableCell>{formatPaymentDate(initiatedAt)}</TableCell>
                       <TableCell>{userEmail}</TableCell>
                       <TableCell>{orderNumber}</TableCell>
                       <TableCell>
@@ -123,9 +132,9 @@ export default function CryptoPaymentsPage() {
                       </TableCell>
                       <TableCell>
                         <Chip
-                          label={p.status}
+                          label={status ?? 'unknown'}
                           size="small"
-                          sx={{ bgcolor: statusColors[p.status], color: 'white' }}
+                          sx={{ bgcolor: statusColor, color: 'white' }}
                         />
                       </TableCell>
                       <TableCell>

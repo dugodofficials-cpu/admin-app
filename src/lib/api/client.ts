@@ -10,6 +10,10 @@ const resolveApiBaseUrl = () => {
   const isProd = process.env.NODE_ENV === 'production';
   const isBrowser = typeof window !== 'undefined';
 
+  if (isProd && isBrowser) {
+    return '/api';
+  }
+
   if (!candidate) {
     if (!isBrowser) {
       return DEFAULT_API_URL;

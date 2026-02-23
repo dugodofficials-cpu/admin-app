@@ -99,7 +99,7 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
   const { method = 'GET', headers = {}, body } = options;
 
   try {
-    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
     const response = await axiosInstance.request<T>({
       url: normalizedEndpoint,
       method,

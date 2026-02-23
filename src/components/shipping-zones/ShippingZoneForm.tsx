@@ -33,7 +33,9 @@ export function ShippingZoneForm({ zone, onCancel }: ShippingZoneFormProps) {
   const createShippingZone = useCreateShippingZone();
   const updateShippingZone = useUpdateShippingZone();
   const { data: countriesData } = useCountries();
-  const countries = countriesData?.data.map((country) => country.name);
+  const countries = (Array.isArray(countriesData?.data) ? countriesData?.data : []).map(
+    (country) => country.name,
+  );
 
   const [formData, setFormData] = useState({
     name: '',
@@ -50,7 +52,9 @@ export function ShippingZoneForm({ zone, onCancel }: ShippingZoneFormProps) {
     if (zone) {
       setFormData({
         name: zone.name,
-        countries: zone.countries.map((country) => country.name),
+        countries: (Array.isArray(zone.countries) ? zone.countries : []).map(
+          (country) => country.name,
+        ),
         regions: zone.regions || [],
         rate: zone.rate,
         postalCodes: zone.postalCodes || [],

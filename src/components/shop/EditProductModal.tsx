@@ -374,6 +374,27 @@ export function EditProductModal({
             )}
 
             <Controller
+              name="type"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  select
+                  label="Product Type"
+                  error={!!errors.type}
+                  helperText={errors.type?.message}
+                  disabled={isBundle}
+                  required
+                >
+                  <MenuItem value={ProductType.PHYSICAL}>Physical</MenuItem>
+                  <MenuItem value={ProductType.DIGITAL}>Digital</MenuItem>
+                  <MenuItem value={ProductType.BUNDLE}>Bundle</MenuItem>
+                </TextField>
+              )}
+            />
+
+            <Controller
               name="price"
               control={control}
               render={({ field }) => (

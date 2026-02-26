@@ -56,6 +56,7 @@ export interface OrderItem {
     _id: string;
     name: string;
     price: number;
+    type?: string;
   };
   quantity: number;
   price: number;

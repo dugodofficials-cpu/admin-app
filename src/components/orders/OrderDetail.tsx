@@ -75,6 +75,9 @@ export function OrderDetail({
   const userEmail = orderUser?.email ?? 'Unknown email';
   const userPhone = orderUser?.phone ?? 'Unknown phone';
   const items = Array.isArray(order.items) ? order.items : [];
+  const hasPhysicalItems = items.some(
+    (item) => String(item.product?.type ?? '').toUpperCase() === 'PHYSICAL',
+  );
 
   return (
     <Box sx={{ mx: 'auto', py: 3, px: 4 }}>
@@ -90,85 +93,89 @@ export function OrderDetail({
           Order Details
         </Typography>
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Button
-            variant="outlined"
-            onClick={onUpdateStatus}
-            sx={{
-              color: '#000',
-              borderColor: '#E5E5E5',
-              textTransform: 'none',
-              fontWeight: 400,
-              py: 0.5,
-              minHeight: 0,
-              lineHeight: 1.5,
-              '&:hover': {
-                borderColor: '#000',
-                backgroundColor: 'transparent',
-              },
-            }}
-          >
-            Update Order Status
-          </Button>
+          {hasPhysicalItems ? (
+            <>
+              <Button
+                variant="outlined"
+                onClick={onUpdateStatus}
+                sx={{
+                  color: '#000',
+                  borderColor: '#E5E5E5',
+                  textTransform: 'none',
+                  fontWeight: 400,
+                  py: 0.5,
+                  minHeight: 0,
+                  lineHeight: 1.5,
+                  '&:hover': {
+                    borderColor: '#000',
+                    backgroundColor: 'transparent',
+                  },
+                }}
+              >
+                Update Order Status
+              </Button>
 
-          <Button
-            variant="outlined"
-            onClick={() => resendOrderConfirmation()}
-            sx={{
-              color: '#000',
-              borderColor: '#E5E5E5',
-              textTransform: 'none',
-              fontSize: '13px',
-              fontWeight: 400,
-              py: 0.5,
-              minHeight: 0,
-              lineHeight: 1.5,
-              '&:hover': {
-                borderColor: '#000',
-                backgroundColor: 'transparent',
-              },
-            }}
-          >
-            Resend Order Confirmation Email
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={onUpdateTracking}
-            sx={{
-              color: '#000',
-              borderColor: '#E5E5E5',
-              textTransform: 'none',
-              fontSize: '13px',
-              fontWeight: 400,
-              py: 0.5,
-              minHeight: 0,
-              lineHeight: 1.5,
-              '&:hover': {
-                borderColor: '#000',
-                backgroundColor: 'transparent',
-              },
-            }}
-          >
-            Update Delivery Status
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={onDeleteOrder}
-            sx={{
-              color: '#fff',
-              bgcolor: '#FF0000',
-              textTransform: 'none',
-              fontWeight: 400,
-              py: 0.5,
-              minHeight: 0,
-              lineHeight: 1.5,
-              '&:hover': {
-                backgroundColor: '#FF0000',
-              },
-            }}
-          >
-            Delete Order
-          </Button>
+              <Button
+                variant="outlined"
+                onClick={() => resendOrderConfirmation()}
+                sx={{
+                  color: '#000',
+                  borderColor: '#E5E5E5',
+                  textTransform: 'none',
+                  fontSize: '13px',
+                  fontWeight: 400,
+                  py: 0.5,
+                  minHeight: 0,
+                  lineHeight: 1.5,
+                  '&:hover': {
+                    borderColor: '#000',
+                    backgroundColor: 'transparent',
+                  },
+                }}
+              >
+                Resend Order Confirmation Email
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={onUpdateTracking}
+                sx={{
+                  color: '#000',
+                  borderColor: '#E5E5E5',
+                  textTransform: 'none',
+                  fontSize: '13px',
+                  fontWeight: 400,
+                  py: 0.5,
+                  minHeight: 0,
+                  lineHeight: 1.5,
+                  '&:hover': {
+                    borderColor: '#000',
+                    backgroundColor: 'transparent',
+                  },
+                }}
+              >
+                Update Delivery Status
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={onDeleteOrder}
+                sx={{
+                  color: '#fff',
+                  bgcolor: '#FF0000',
+                  textTransform: 'none',
+                  fontWeight: 400,
+                  py: 0.5,
+                  minHeight: 0,
+                  lineHeight: 1.5,
+                  '&:hover': {
+                    backgroundColor: '#FF0000',
+                  },
+                }}
+              >
+                Delete Order
+              </Button>
+            </>
+          ) : null}
         </Stack>
       </Stack>
 
@@ -271,152 +278,154 @@ export function OrderDetail({
         <InfoRow
           label="Shipping Address"
           value={
-            order.shippingDetails?.address.street +
-            ', ' +
-            order.shippingDetails?.address.city +
-            ', ' +
-            order.shippingDetails?.address.state +
-            ', ' +
-            order.shippingDetails?.address.postalCode
+            order.shippingDetails?.address
+              ? `${order.shippingDetails.address.street}, ${order.shippingDetails.address.city}, ${order.shippingDetails.address.state}, ${order.shippingDetails.address.postalCode}`
+              : 'N/A'
           }
         />
       </Box>
-      <Typography
-        variant="h6"
-        sx={{
-          fontSize: '15px',
-          fontWeight: 700,
-          my: 2.5,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-        }}
-      >
-        🚚 Delivery & Fulfillment
-      </Typography>
-      <Box
-        sx={{
-          mt: 4,
-          backgroundColor: '#F8F8F8',
-          p: 4,
-          borderRadius: '0.25rem',
-        }}
-      >
-        <InfoRow
-          label="Shipping Status"
-          value={order.shippingDetails?.deliveryStatus.toUpperCase()}
-        />
-
-        <InfoRow
-          label="Tracking Number"
-          value={order.shippingDetails?.trackingNumber}
-        />
-
-        <Box sx={{ mb: 2.5 }}>
+      {hasPhysicalItems ? (
+        <>
           <Typography
-            variant="body2"
+            variant="h6"
             sx={{
-              color: '#666',
-              fontSize: '13px',
-              mb: 0.75,
-              fontWeight: 500,
-            }}
-          >
-            Delivery Vendor
-          </Typography>
-          <RadioGroup
-            value={order.shippingDetails?.carrier}
-            name="delivery-vendor"
-            sx={{
+              fontSize: '15px',
+              fontWeight: 700,
+              my: 2.5,
               display: 'flex',
-              flexDirection: 'row',
-              backgroundColor: '#fff',
-              p: 1,
-              borderRadius: '0.25rem',
+              alignItems: 'center',
               gap: 1,
-              '& .MuiFormControlLabel-root': {
-                mb: 0.5,
-                '& .MuiTypography-root': {
-                  fontSize: '14px',
-                  color: '#000',
-                },
-              },
             }}
           >
-            <FormControlLabel
-              value={Carriers.GIG}
-              control={
-                <Radio
-                  size="small"
-                  sx={{
-                    color: '#E5E5E5',
-                    '&.Mui-checked': {
-                      color: '#000',
-                    },
-                  }}
-                />
-              }
-              label={Carriers.GIG}
+            🚚 Delivery & Fulfillment
+          </Typography>
+          <Box
+            sx={{
+              mt: 4,
+              backgroundColor: '#F8F8F8',
+              p: 4,
+              borderRadius: '0.25rem',
+            }}
+          >
+            <InfoRow
+              label="Shipping Status"
+              value={order.shippingDetails?.deliveryStatus
+                ? order.shippingDetails.deliveryStatus.toUpperCase()
+                : 'N/A'}
             />
-            <FormControlLabel
-              value={Carriers.SPEEDAF}
-              control={
-                <Radio
-                  size="small"
-                  sx={{
-                    color: '#E5E5E5',
-                    '&.Mui-checked': {
-                      color: '#000',
-                    },
-                  }}
-                />
-              }
-              label={Carriers.SPEEDAF}
-            />
-            <FormControlLabel
-              value={Carriers.DHL}
-              control={
-                <Radio
-                  size="small"
-                  sx={{
-                    color: '#E5E5E5',
-                    '&.Mui-checked': {
-                      color: '#000',
-                    },
-                  }}
-                />
-              }
-              label={Carriers.DHL}
-            />
-            <FormControlLabel
-              value={Carriers.CUSTOM}
-              control={
-                <Radio
-                  size="small"
-                  sx={{
-                    color: '#E5E5E5',
-                    '&.Mui-checked': {
-                      color: '#000',
-                    },
-                  }}
-                />
-              }
-              label={Carriers.CUSTOM}
-            />
-          </RadioGroup>
-        </Box>
 
-        <InfoRow
-          label="Expected Delivery"
-          value={
-            order.shippingDetails?.estimatedDeliveryDate
-              ? new Date(
-                  order.shippingDetails?.estimatedDeliveryDate,
-                ).toLocaleDateString()
-              : '3 - 5 Business Days'
-          }
-        />
-      </Box>
+            <InfoRow
+              label="Tracking Number"
+              value={order.shippingDetails?.trackingNumber ?? 'N/A'}
+            />
+
+            <Box sx={{ mb: 2.5 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: '#666',
+                  fontSize: '13px',
+                  mb: 0.75,
+                  fontWeight: 500,
+                }}
+              >
+                Delivery Vendor
+              </Typography>
+              <RadioGroup
+                value={order.shippingDetails?.carrier}
+                name="delivery-vendor"
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  backgroundColor: '#fff',
+                  p: 1,
+                  borderRadius: '0.25rem',
+                  gap: 1,
+                  '& .MuiFormControlLabel-root': {
+                    mb: 0.5,
+                    '& .MuiTypography-root': {
+                      fontSize: '14px',
+                      color: '#000',
+                    },
+                  },
+                }}
+              >
+                <FormControlLabel
+                  value={Carriers.GIG}
+                  control={
+                    <Radio
+                      size="small"
+                      sx={{
+                        color: '#E5E5E5',
+                        '&.Mui-checked': {
+                          color: '#000',
+                        },
+                      }}
+                    />
+                  }
+                  label={Carriers.GIG}
+                />
+                <FormControlLabel
+                  value={Carriers.SPEEDAF}
+                  control={
+                    <Radio
+                      size="small"
+                      sx={{
+                        color: '#E5E5E5',
+                        '&.Mui-checked': {
+                          color: '#000',
+                        },
+                      }}
+                    />
+                  }
+                  label={Carriers.SPEEDAF}
+                />
+                <FormControlLabel
+                  value={Carriers.DHL}
+                  control={
+                    <Radio
+                      size="small"
+                      sx={{
+                        color: '#E5E5E5',
+                        '&.Mui-checked': {
+                          color: '#000',
+                        },
+                      }}
+                    />
+                  }
+                  label={Carriers.DHL}
+                />
+                <FormControlLabel
+                  value={Carriers.CUSTOM}
+                  control={
+                    <Radio
+                      size="small"
+                      sx={{
+                        color: '#E5E5E5',
+                        '&.Mui-checked': {
+                          color: '#000',
+                        },
+                      }}
+                    />
+                  }
+                  label={Carriers.CUSTOM}
+                />
+              </RadioGroup>
+            </Box>
+
+            <InfoRow
+              label="Expected Delivery"
+              value={
+                order.shippingDetails?.estimatedDeliveryDate
+                  ? new Date(
+                      order.shippingDetails.estimatedDeliveryDate,
+                    ).toLocaleDateString()
+                  : '3 - 5 Business Days'
+              }
+            />
+          </Box>
+        </>
+      ) : null}
     </Box>
   );
 }

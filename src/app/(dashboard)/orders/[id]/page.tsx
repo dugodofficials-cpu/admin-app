@@ -169,13 +169,21 @@ export default function OrderDetailsPage() {
         onClose={() => setIsDeliveryModalOpen(false)}
         onSubmit={handleDeliverySubmit}
         isLoading={updateDeliveryStatus.isPending}
-        currentDeliveryStatus={orderDetail.data.shippingDetails.deliveryStatus}
-        currentTrackingNumber={orderDetail.data.shippingDetails.trackingNumber}
-        currentCarrier={orderDetail.data.shippingDetails.carrier}
-        currentEstimatedDeliveryDate={
-          orderDetail.data.shippingDetails.estimatedDeliveryDate
+        currentDeliveryStatus={
+          orderDetail.data.shippingDetails?.deliveryStatus ?? DeliveryStatus.PENDING
         }
-        currentDeliveryNotes={orderDetail.data.shippingDetails.deliveryNotes}
+        currentTrackingNumber={
+          orderDetail.data.shippingDetails?.trackingNumber
+        }
+        currentCarrier={
+          orderDetail.data.shippingDetails?.carrier
+        }
+        currentEstimatedDeliveryDate={
+          orderDetail.data.shippingDetails?.estimatedDeliveryDate
+        }
+        currentDeliveryNotes={
+          orderDetail.data.shippingDetails?.deliveryNotes
+        }
       />
 
       <DeleteOrderConfirmationModal

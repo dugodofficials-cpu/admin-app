@@ -176,7 +176,7 @@ export function UserList() {
   });
 
   const handleAction = (action: string, userId: string) => {
-    const user = users.find((u) => u._id === userId);
+    const user = users.find((u: User) => u._id === userId);
     switch (action) {
       case 'view':
         router.push(`/users/${userId}`);
@@ -212,6 +212,8 @@ export function UserList() {
       });
     }
   };
+
+  if (isLoading) {
     return (
       <Box>
         <Box

@@ -62,7 +62,6 @@ export function InventoryList() {
 
   const { data, refetch } = useProducts({
     page: page + 1,
-    type: ProductType.PHYSICAL,
     includeBundleItems: true,
     limit: rowsPerPage,
     search: searchTerm,
@@ -71,7 +70,12 @@ export function InventoryList() {
     sortOrder: sortOrder,
   });
 
-  const products = data?.data ?? [];
+  const products = (data?.data ?? []).filter((product) =>
+    product.type === ProductType.PHYSICAL ||
+    product.type === ProductType.BUNDLE ||
+    product.type === ProductType.EBOOK ||
+    (product.type === ProductType.DIGITAL && !product.albumId),
+  );
   const total = data?.meta?.total ?? 0;
 
   const handleSort = (field: SortField) => {

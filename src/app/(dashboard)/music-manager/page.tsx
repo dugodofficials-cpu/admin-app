@@ -189,6 +189,10 @@ export default function MusicManagerPage() {
     return <Box sx={{ p: 4, color: 'error.main' }}>Error loading products</Box>;
   }
 
+  const musicProducts = (productsData?.data ?? []).filter(
+    (product: Product) => product.type === ProductType.DIGITAL && !!product.albumId,
+  );
+
   return (
     <Box sx={{ p: 4, overflow: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
@@ -377,7 +381,7 @@ export default function MusicManagerPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {productsData?.data?.map((product: Product) => (
+              {musicProducts.map((product: Product) => (
                 <TableRow
                   key={product._id}
                   hover
@@ -412,7 +416,7 @@ export default function MusicManagerPage() {
                   </TableCell>
                 </TableRow>
               ))}
-              {(!productsData?.data || productsData.data.length === 0) && (
+              {musicProducts.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
                     <Typography variant="body2" color="text.secondary">

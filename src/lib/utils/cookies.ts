@@ -24,7 +24,6 @@ export const cookies = {
   getAuthToken: () => {
     try {
       const token = Cookies.get(AUTH_TOKEN_KEY);
-      console.log('Retrieved token:', token ? 'exists' : 'not found');
       return token;
     } catch (error) {
       console.error('Failed to get token:', error);
@@ -35,7 +34,6 @@ export const cookies = {
   removeAuthToken: () => {
     try {
       Cookies.remove(AUTH_TOKEN_KEY, { path: '/' });
-      console.log('Token removed successfully');
     } catch (error) {
       console.error('Failed to remove token:', error);
     }

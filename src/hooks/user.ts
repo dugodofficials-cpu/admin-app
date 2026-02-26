@@ -25,7 +25,7 @@ export function useUpdateUser() {
 
 export function useUser() {
   const queryClient = useQueryClient();
-  const currentUser = queryClient.getQueryData<{ data: User }>(['auth'])?.data;
+  const currentUser = queryClient.getQueryData<{ data: User }>(['auth'])?.data ?? null;
 
   const updateUserMutation = useUpdateUser();
 

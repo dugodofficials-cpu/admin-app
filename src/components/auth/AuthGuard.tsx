@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { cookies } from '@/lib/utils/cookies';
 import { Box, CircularProgress } from '@mui/material';
+import { useAuth } from '@/hooks/use-auth';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -11,15 +12,30 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
-  const token = cookies.getAuthToken();
+  const { isLoading, error } = useAuth();
+  const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>(
+    'checking',
+  );
 
   useEffect(() => {
-    if (!token) {
-      router.push('/login');
-    }
-  }, [router, token]);
+    const token = cookies.getAuthToken();
+    setAuthStatus(token ? 'authenticated' : 'unauthenticated');
+  }, []);
 
-  if (!token) {
+  useEffect(() => {
+    if (authStatus === 'unauthenticated') {
+      router.replace('/login');
+    }
+  }, [router, authStatus]);
+
+  useEffect(() => {
+    if (authStatus !== 'authenticated') return;
+    if (!error) return;
+    cookies.removeAuthToken();
+    router.replace('/login');
+  }, [authStatus, error, router]);
+
+  if (authStatus !== 'authenticated' || isLoading) {
     return (
       <Box
         sx={{
@@ -35,4 +51,4 @@ export function AuthGuard({ children }: AuthGuardProps) {
   }
 
   return <>{children}</>;
-} 
+}

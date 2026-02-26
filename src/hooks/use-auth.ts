@@ -9,6 +9,8 @@ interface User {
   id: string;
   email: string;
   emailVerified: boolean;
+  firstName?: string;
+  lastName?: string;
 }
 
 interface AuthResponse {
@@ -83,7 +85,7 @@ export function useAuth() {
       }),
     onSuccess: () => {
       cookies.removeAuthToken();
-      queryClient.setQueryData(['auth'], { user: null });
+      queryClient.removeQueries({ queryKey: ['auth'] });
       router.push(ROUTES.DASHBOARD.AUTH.LOGIN);
     },
     onError: (error: Error) => {

@@ -33,9 +33,7 @@ export function ShippingZoneForm({ zone, onCancel }: ShippingZoneFormProps) {
   const createShippingZone = useCreateShippingZone();
   const updateShippingZone = useUpdateShippingZone();
   const { data: countriesData } = useCountries();
-  const countries = (Array.isArray(countriesData?.data) ? countriesData?.data : []).map(
-    (country) => country.name,
-  );
+  const countries = countriesData?.data?.map((country) => country.name) ?? [];
 
   const [formData, setFormData] = useState({
     name: '',
@@ -52,9 +50,9 @@ export function ShippingZoneForm({ zone, onCancel }: ShippingZoneFormProps) {
     if (zone) {
       setFormData({
         name: zone.name,
-        countries: (Array.isArray(zone.countries) ? zone.countries : []).map(
-          (country) => country.name,
-        ),
+        countries: (zone.countries ?? [])
+          .map((country) => country?.name)
+          .filter((name): name is string => Boolean(name)),
         regions: zone.regions || [],
         rate: zone.rate,
         postalCodes: zone.postalCodes || [],
@@ -90,12 +88,13 @@ export function ShippingZoneForm({ zone, onCancel }: ShippingZoneFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const selectedCountryIds = (countriesData?.data ?? [])
+      .filter((country) => formData.countries.includes(country.name))
+      .map((country) => country._id);
+
     const shippingZoneData: CreateShippingZoneDto = {
       name: formData.name,
-      countries:
-        countriesData?.data
-          .filter((country) => formData.countries.includes(country.name))
-          ?.map((country) => country._id) || [],
+      countries: selectedCountryIds,
       regions: formData.regions,
       rate: Number(formData.rate),
       postalCodes: formData.postalCodes,

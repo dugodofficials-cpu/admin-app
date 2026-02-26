@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeleteUser, useRoles, useUsers } from '@/hooks/users';
+import { useRoles, useUsers } from '@/hooks/users';
 import { User } from '@/lib/api/users';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SearchIcon from '@mui/icons-material/Search';
@@ -106,7 +106,6 @@ export function UserList() {
   const [rolesModalOpen, setRolesModalOpen] = useState(false);
   const [assignRoleModalOpen, setAssignRoleModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const { mutate: deleteUser, isPending: isDeletingUser } = useDeleteUser();
   const { data: rolesData } = useRoles();
   const roles = rolesData?.data ?? [];
 
@@ -179,14 +178,6 @@ export function UserList() {
           setAssignRoleModalOpen(true);
         }
         break;
-      case 'delete': {
-        const user = users.find((u) => u._id === userId);
-        const label = user?.email || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || userId;
-        const confirmed = window.confirm(`Delete user ${label}? This cannot be undone.`);
-        if (!confirmed) return;
-        deleteUser(userId);
-        break;
-      }
       case 'suspend':
       case 'reactivate':
         console.log(`${action} user:`, userId);
@@ -554,19 +545,6 @@ export function UserList() {
                         }}
                       >
                         Assign Role
-                      </Button>
-                      <Button
-                        variant="contained"
-                        onClick={() => handleAction('delete', user._id)}
-                        disabled={isDeletingUser}
-                        sx={{
-                          bgcolor: '#FF4D4D',
-                          '&:hover': { bgcolor: '#E04545' },
-                          fontSize: '12px',
-                          px: 1,
-                        }}
-                      >
-                        Delete
                       </Button>
                     </ButtonGroup>
                   </TableCell>

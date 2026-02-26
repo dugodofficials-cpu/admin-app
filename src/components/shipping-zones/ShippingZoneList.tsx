@@ -126,7 +126,7 @@ export function ShippingZoneList({
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {(Array.isArray(zone.countries) ? zone.countries : []).map((country: Country, index: number) => (
+                      {(zone.countries ?? []).map((country: Country, index: number) => (
                         <Chip
                           key={index}
                           label={country.name}
@@ -139,7 +139,7 @@ export function ShippingZoneList({
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {(Array.isArray(zone.regions) ? zone.regions : []).map((region, index) => (
+                      {zone.regions?.map((region, index) => (
                         <Chip
                           key={index}
                           label={region}

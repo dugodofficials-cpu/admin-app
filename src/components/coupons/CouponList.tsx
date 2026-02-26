@@ -17,16 +17,23 @@ import { useState } from 'react';
 import EditCouponModal from './EditCouponModal';
 import { Coupon } from './types';
 
-const formatCouponDate = (value?: string) => {
-  if (!value) return '—';
-  const date = new Date(value);
-  if (!isValid(date)) return '—';
-  return format(date, 'PP');
-};
-
 export default function CouponList() {
   const { data: coupons, isLoading } = useCoupons();
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+
+  const formatDate = (value?: string) => {
+    if (!value) {
+      return '—';
+    }
+    const parsed = new Date(value);
+    return isValid(parsed) ? format(parsed, 'PP') : '—';
+  };
+
+  const couponRows: Coupon[] = Array.isArray(coupons)
+    ? coupons
+    : Array.isArray(coupons?.data)
+      ? coupons.data
+      : [];
 
   if (isLoading) {
     return <Typography>Loading...</Typography>;
@@ -49,7 +56,7 @@ export default function CouponList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {coupons?.data?.map((coupon) => (
+            {couponRows.map((coupon) => (
               <TableRow key={coupon._id}>
                 <TableCell>{coupon.code}</TableCell>
                 <TableCell>{coupon.type}</TableCell>
@@ -59,9 +66,9 @@ export default function CouponList() {
                     : `₦${coupon.value}`}
                 </TableCell>
                 <TableCell>
-                  {formatCouponDate(coupon.startDate)}
+                  {formatDate(coupon.startDate)}
                 </TableCell>
-                <TableCell>{formatCouponDate(coupon.endDate)}</TableCell>
+                <TableCell>{formatDate(coupon.endDate)}</TableCell>
                 <TableCell>
                   {coupon.usageCount}
                   {coupon.usageLimit ? `/${coupon.usageLimit}` : ''}

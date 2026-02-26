@@ -1,61 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { cookies } from '@/lib/utils/cookies';
 
-const DEFAULT_API_URL = 'https://api.dugodofficial.com';
-const DEV_API_URL = 'http://localhost:3001';
-const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0']);
-
-const resolveApiBaseUrl = () => {
-  const candidate = process.env.NEXT_PUBLIC_API_URL;
-  const isProd = process.env.NODE_ENV === 'production';
-  const isBrowser = typeof window !== 'undefined';
-
-  if (isProd && isBrowser) {
-    return '/api';
-  }
-
-  if (!candidate) {
-    if (!isBrowser) {
-      return DEFAULT_API_URL;
-    }
-
-    return isProd ? '/api' : DEV_API_URL;
-  }
-
-  if (candidate.startsWith('/')) {
-    return isBrowser ? candidate : DEFAULT_API_URL;
-  }
-
-  let parsed: URL;
-  try {
-    parsed = new URL(candidate);
-  } catch {
-    return isBrowser && isProd ? '/api' : DEFAULT_API_URL;
-  }
-
-  const isLocal = LOCAL_HOSTS.has(parsed.hostname);
-  const appCandidate = process.env.NEXT_PUBLIC_APP_URL;
-  let appHost: string | null = null;
-
-  if (appCandidate) {
-    try {
-      appHost = new URL(appCandidate).hostname;
-    } catch {
-      appHost = null;
-    }
-  }
-
-  if (isProd && (isLocal || parsed.hostname === 'admin.dugodofficial.com' || (appHost && parsed.hostname === appHost))) {
-    return isBrowser ? '/api' : DEFAULT_API_URL;
-  }
-
-  if (isProd && parsed.protocol !== 'https:' && !isLocal) {
-    return isBrowser ? '/api' : DEFAULT_API_URL;
-  }
-
-  return parsed.origin;
-};
-
 type RequestOptions = {
   method?: string;
   headers?: Record<string, string>;
@@ -70,7 +15,7 @@ class ApiError extends Error {
 }
 
 const axiosInstance = axios.create({
-  baseURL: resolveApiBaseUrl(),
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -103,7 +48,7 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
   const { method = 'GET', headers = {}, body } = options;
 
   try {
-    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     const response = await axiosInstance.request<T>({
       url: normalizedEndpoint,
       method,

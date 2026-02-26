@@ -45,6 +45,21 @@ export default function EditCouponModal({
     endDate: '',
   });
 
+  const normalizeDateInput = (value?: string) => {
+    if (!value) {
+      return '';
+    }
+    const [datePart] = value.split('T');
+    if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+      return datePart;
+    }
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return '';
+    }
+    return parsed.toISOString().split('T')[0];
+  };
+
   useEffect(() => {
     if (coupon) {
       setFormData({
@@ -52,8 +67,8 @@ export default function EditCouponModal({
         description: coupon.description,
         type: coupon.type,
         value: coupon.value,
-        startDate: coupon.startDate.split('T')[0],
-        endDate: coupon.endDate.split('T')[0],
+        startDate: normalizeDateInput(coupon.startDate),
+        endDate: normalizeDateInput(coupon.endDate),
         minimumPurchase: coupon.minimumPurchase,
         maximumDiscount: coupon.maximumDiscount,
         usageLimit: coupon.usageLimit,

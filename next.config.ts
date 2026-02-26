@@ -66,6 +66,7 @@ const nextConfig: NextConfig = {
         key: 'Permissions-Policy',
         value: 'camera=(), microphone=(), geolocation=()'
       },
+      // Helps mitigate XSS in some contexts; modern browsers mostly ignore this but it's safe.
       { key: 'X-XSS-Protection', value: '0' },
     ] as { key: string; value: string }[];
 

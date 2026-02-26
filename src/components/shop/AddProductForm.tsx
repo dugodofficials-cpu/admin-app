@@ -123,25 +123,6 @@ export function AddProductForm() {
         />
 
         <Controller
-          name="type"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              select
-              fullWidth
-              label="Product Type"
-              error={!!errors.type}
-              helperText={errors.type?.message}
-              required
-            >
-              <MenuItem value={ProductType.PHYSICAL}>Physical</MenuItem>
-              <MenuItem value={ProductType.DIGITAL}>Digital</MenuItem>
-            </TextField>
-          )}
-        />
-
-        <Controller
           name="categories"
           control={control}
           render={({ field }) => (

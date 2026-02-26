@@ -78,6 +78,12 @@ interface RowProps {
 
 function Row({ order, index, page, rowsPerPage, onViewOrder }: RowProps) {
   const [open, setOpen] = useState(false);
+  const orderUser = typeof order.user === 'object' && order.user !== null
+    ? order.user
+    : null;
+  const userName = orderUser
+    ? `${orderUser.firstName ?? ''} ${orderUser.lastName ?? ''}`.trim() || 'Unnamed user'
+    : 'Unknown user';
 
   return (
     <>
@@ -100,9 +106,9 @@ function Row({ order, index, page, rowsPerPage, onViewOrder }: RowProps) {
         <TableCell onClick={() => onViewOrder(order._id)}>
           {order.orderNumber}
         </TableCell>
-        <TableCell
-          onClick={() => onViewOrder(order._id)}
-        >{`${order.user.firstName} ${order.user.lastName}`}</TableCell>
+        <TableCell onClick={() => onViewOrder(order._id)}>
+          {userName}
+        </TableCell>
         <TableCell onClick={() => onViewOrder(order._id)}>
           {order.items.length} item{order.items.length > 1 ? 's' : ''}
         </TableCell>

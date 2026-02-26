@@ -65,6 +65,16 @@ export function OrderDetail({
   const { mutate: resendOrderConfirmation } = useResendOrderConfirmation(
     order._id,
   );
+  const orderUser = typeof order.user === 'object' && order.user !== null
+    ? order.user
+    : null;
+  const userName = orderUser
+    ? `${orderUser.firstName ?? ''} ${orderUser.lastName ?? ''}`.trim() ||
+      'Unnamed user'
+    : 'Unknown user';
+  const userEmail = orderUser?.email ?? 'Unknown email';
+  const userPhone = orderUser?.phone ?? 'Unknown phone';
+  const items = Array.isArray(order.items) ? order.items : [];
 
   return (
     <Box sx={{ mx: 'auto', py: 3, px: 4 }}>
@@ -166,10 +176,10 @@ export function OrderDetail({
         <InfoRow label="Order ID" value={order.orderNumber} />
         <InfoRow
           label="User"
-          value={order.user.firstName + ' ' + order.user.lastName}
+          value={userName}
         />
-        <InfoRow label="Email" value={order.user.email} />
-        <InfoRow label="Phone" value={order.user.phone} />
+        <InfoRow label="Email" value={userEmail} />
+        <InfoRow label="Phone" value={userPhone} />
         <InfoRow
           label="Date Ordered"
           value={new Date(order.orderedAt).toLocaleString()}
@@ -178,14 +188,18 @@ export function OrderDetail({
           label="Item(s)"
           value={
             <Box>
-              {order.items.map((item, index) => (
+              {items.map((item, index) => {
+                const productName = item.product?.name ?? 'Unknown product';
+                const unitPrice = Number(item.product?.price ?? item.price ?? 0);
+                const totalPrice = Number(item.total ?? unitPrice * item.quantity);
+                return (
                 <Box
                   key={item._id || index}
                   sx={{
-                    mb: index < order.items.length - 1 ? 1.5 : 0,
-                    pb: index < order.items.length - 1 ? 1.5 : 0,
+                    mb: index < items.length - 1 ? 1.5 : 0,
+                    pb: index < items.length - 1 ? 1.5 : 0,
                     borderBottom:
-                      index < order.items.length - 1
+                      index < items.length - 1
                         ? '1px solid #E5E5E5'
                         : 'none',
                   }}
@@ -198,7 +212,7 @@ export function OrderDetail({
                       mb: 0.5,
                     }}
                   >
-                    {item.product.name}
+                    {productName}
                   </Typography>
                   <Typography
                     sx={{
@@ -207,11 +221,12 @@ export function OrderDetail({
                     }}
                   >
                     Quantity: {item.quantity} × ₦
-                    {item.product.price.toLocaleString()} = ₦
-                    {item.total.toLocaleString()}
+                    {unitPrice.toLocaleString()} = ₦
+                    {totalPrice.toLocaleString()}
                   </Typography>
                 </Box>
-              ))}
+              );
+              })}
             </Box>
           }
         />

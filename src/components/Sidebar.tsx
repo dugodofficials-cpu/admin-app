@@ -70,7 +70,6 @@ export const Sidebar = () => {
   const pathname = usePathname();
   const logout = useLogout();
   const isDashboardHome = pathname === ROUTES.DASHBOARD.HOME;
-  const buildSha = process.env.NEXT_PUBLIC_BUILD_SHA;
 
   return (
     <Box
@@ -141,10 +140,6 @@ export const Sidebar = () => {
           <ListItemText primary="Log out" />
         </ListItemButton>
       </ListItem>
-
-      <Box sx={{ mt: 2, color: 'text.secondary', fontSize: '0.75rem' }}>
-        build: {buildSha ? buildSha.slice(0, 7) : 'unknown'}
-      </Box>
     </Box>
   );
 };

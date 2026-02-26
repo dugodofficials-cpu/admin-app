@@ -1,6 +1,7 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
 import { Providers } from './providers';
+import EmotionRegistry from '@/components/EmotionRegistry';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,7 +24,9 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <EmotionRegistry>
+          <Providers>{children}</Providers>
+        </EmotionRegistry>
       </body>
     </html>
   );

@@ -4,7 +4,6 @@ import { useRoles, useUsers, useDeleteUser } from '@/hooks/users';
 import { User } from '@/lib/api/users';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SearchIcon from '@mui/icons-material/Search';
-import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Box,
   Button,
@@ -15,7 +14,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  IconButton,
   InputAdornment,
   Menu,
   MenuItem,

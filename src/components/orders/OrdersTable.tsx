@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useBulkDeleteOrders, useGetOrder } from '@/hooks/order';
 import {
@@ -191,14 +191,14 @@ function Row({ order, index, page, rowsPerPage, onViewOrder, selected, onToggleS
                             : 'N/A'}
                         </TableCell>
                         <TableCell align="right">
-                          ₦
+                          â‚¦
                           {item.price.toLocaleString('en-NG', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
                         </TableCell>
                         <TableCell align="right">
-                          ₦
+                          â‚¦
                           {(item.quantity * item.price).toLocaleString(
                             'en-NG',
                             {
@@ -219,7 +219,7 @@ function Row({ order, index, page, rowsPerPage, onViewOrder, selected, onToggleS
                       Shipping
                     </TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                      ₦
+                      â‚¦
                       {order.shippingCost.toLocaleString('en-NG', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
@@ -235,7 +235,7 @@ function Row({ order, index, page, rowsPerPage, onViewOrder, selected, onToggleS
                       Discount
                     </TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                      ₦
+                      â‚¦
                       {order.discount.toLocaleString('en-NG', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
@@ -251,7 +251,7 @@ function Row({ order, index, page, rowsPerPage, onViewOrder, selected, onToggleS
                       Total
                     </TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                      ₦
+                      â‚¦
                       {order.total.toLocaleString('en-NG', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
@@ -337,6 +337,8 @@ export function OrdersTable({
     status: selectedStatus,
     userId: userId,
   });
+
+  const { mutateAsync: bulkDelete, isPending: isBulkDeleting } = useBulkDeleteOrders();
 
   if (isLoading) {
     return (
@@ -471,7 +473,6 @@ export function OrdersTable({
   };
 
   const selectedCount = selectedOrderIds.size;
-  const { mutateAsync: bulkDelete, isPending: isBulkDeleting } = useBulkDeleteOrders();
 
   const openConfirm = () => {
     setConfirmText('');

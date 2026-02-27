@@ -1,17 +1,7 @@
-import { GetOrdersQueryDto, OrderResponse as ComponentOrderResponse, Order as ComponentOrder, OrderDetailResponse, PaymentStatus } from '@/components/orders/types';
+﻿import { GetOrdersQueryDto, OrderResponse as ComponentOrderResponse, Order as ComponentOrder, OrderDetailResponse, PaymentStatus, OrderStatus } from '@/components/orders/types';
 import { apiClient } from './client';
 import { Product, ProductType } from './products';
 import { AxiosResponse } from 'axios';
-
-export enum OrderStatus {
-  PENDING = 'PENDING',
-  CONFIRMED = 'CONFIRMED',
-  PROCESSING = 'PROCESSING',
-  SHIPPED = 'SHIPPED',
-  DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED',
-  REFUNDED = 'REFUNDED',
-}
 
 export enum DeliveryStatus {
   PENDING = 'PENDING',

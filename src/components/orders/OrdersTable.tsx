@@ -73,6 +73,7 @@ const statusColors: Record<OrderStatus, string> = {
   [OrderStatus.DELIVERED]: '#2FD65D',
   [OrderStatus.CANCELLED]: '#FF0000',
   [OrderStatus.REFUNDED]: '#FF0000',
+  [OrderStatus.DELETED]: '#FF0000',
 };
 
 interface RowProps {

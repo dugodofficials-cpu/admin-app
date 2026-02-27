@@ -1,6 +1,7 @@
 import { GetOrdersQueryDto, Order, OrderDetailResponse, OrderResponse, OrderStatus } from '@/components/orders/types';
 import {
   createOrder as createOrderApi,
+  bulkDeleteOrders as bulkDeleteOrdersApi,
   getOrder as getOrderApi,
   getOrderDetail as getOrderDetailApi,
   getOrderStatistics as getOrderStatisticsApi,
@@ -29,6 +30,23 @@ export const useCreateOrder = () => {
       enqueueSnackbar(error.message || 'Failed to create order', {
         variant: 'error',
       });
+    },
+  });
+};
+
+export const useBulkDeleteOrders = () => {
+  const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
+
+  return useMutation<{ data: { matched: number; modified: number }; message: string }, Error, { orderIds: string[]; notes?: string }>({
+    mutationFn: bulkDeleteOrdersApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['order'] });
+      queryClient.invalidateQueries({ queryKey: ['orderStatistics'] });
+      enqueueSnackbar('Orders deleted successfully', { variant: 'success' });
+    },
+    onError: (error) => {
+      enqueueSnackbar(error.message || 'Failed to delete orders', { variant: 'error' });
     },
   });
 };

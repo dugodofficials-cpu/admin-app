@@ -1,8 +1,9 @@
 'use client';
 
-import { useGetOrder } from '@/hooks/order';
+import { useBulkDeleteOrders, useGetOrder } from '@/hooks/order';
 import {
   Box,
+  Checkbox,
   Table,
   TableBody,
   TableCell,
@@ -21,6 +22,10 @@ import {
   Skeleton,
   TablePagination,
   Collapse,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -34,6 +39,7 @@ import dayjs from 'dayjs';
 
 interface Column {
   id:
+    | 'select'
     | 'expand'
     | 'index'
     | 'orderNumber'
@@ -48,6 +54,7 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
+  { id: 'select', label: '', minWidth: 40 },
   { id: 'expand', label: '', minWidth: 50 },
   { id: 'index', label: '#', minWidth: 50 },
   { id: 'orderNumber', label: 'Order ID', minWidth: 100 },
@@ -74,9 +81,11 @@ interface RowProps {
   page: number;
   rowsPerPage: number;
   onViewOrder: (orderId: string) => void;
+  selected: boolean;
+  onToggleSelected: (orderId: string) => void;
 }
 
-function Row({ order, index, page, rowsPerPage, onViewOrder }: RowProps) {
+function Row({ order, index, page, rowsPerPage, onViewOrder, selected, onToggleSelected }: RowProps) {
   const [open, setOpen] = useState(false);
   const orderUser = typeof order.user === 'object' && order.user !== null
     ? order.user
@@ -88,6 +97,15 @@ function Row({ order, index, page, rowsPerPage, onViewOrder }: RowProps) {
   return (
     <>
       <TableRow hover sx={{ '& > *': { borderBottom: 'unset' } }}>
+        <TableCell padding="checkbox">
+          <Checkbox
+            checked={selected}
+            onClick={(e) => e.stopPropagation()}
+            onChange={() => onToggleSelected(order._id)}
+            size="small"
+            sx={{ color: '#111' }}
+          />
+        </TableCell>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -143,7 +161,7 @@ function Row({ order, index, page, rowsPerPage, onViewOrder }: RowProps) {
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 2 }}>
               <Typography variant="h6" gutterBottom component="div">
@@ -266,6 +284,9 @@ export function OrdersTable({
   );
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(new Set());
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
 
   const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -420,6 +441,57 @@ export function OrdersTable({
 
   const orders = ordersData?.data ?? [];
   const total = ordersData?.meta.total ?? 0;
+  const pageOrderIds = orders.map(o => o._id);
+
+  const allSelectedOnPage = pageOrderIds.length > 0 && pageOrderIds.every(id => selectedOrderIds.has(id));
+  const someSelectedOnPage = pageOrderIds.some(id => selectedOrderIds.has(id));
+
+  const toggleSelected = (orderId: string) => {
+    setSelectedOrderIds(prev => {
+      const next = new Set(prev);
+      if (next.has(orderId)) {
+        next.delete(orderId);
+      } else {
+        next.add(orderId);
+      }
+      return next;
+    });
+  };
+
+  const toggleSelectAllOnPage = () => {
+    setSelectedOrderIds(prev => {
+      const next = new Set(prev);
+      if (allSelectedOnPage) {
+        pageOrderIds.forEach(id => next.delete(id));
+      } else {
+        pageOrderIds.forEach(id => next.add(id));
+      }
+      return next;
+    });
+  };
+
+  const selectedCount = selectedOrderIds.size;
+  const { mutateAsync: bulkDelete, isPending: isBulkDeleting } = useBulkDeleteOrders();
+
+  const openConfirm = () => {
+    setConfirmText('');
+    setConfirmOpen(true);
+  };
+
+  const closeConfirm = () => {
+    setConfirmOpen(false);
+    setConfirmText('');
+  };
+
+  const handleBulkDelete = async () => {
+    const ids = Array.from(selectedOrderIds);
+    await bulkDelete({
+      orderIds: ids,
+      notes: `Bulk deleted from admin UI`,
+    });
+    setSelectedOrderIds(new Set());
+    closeConfirm();
+  };
 
   return (
     <Box>
@@ -537,6 +609,25 @@ export function OrdersTable({
               </MenuItem>
             ))}
           </Menu>
+
+          <Button
+            variant="outlined"
+            disabled={selectedCount === 0 || isBulkDeleting}
+            onClick={openConfirm}
+            sx={{
+              minWidth: 160,
+              height: '44px',
+              borderColor: '#E5E7EB',
+              color: selectedCount === 0 ? '#9CA3AF' : '#EF4444',
+              textTransform: 'none',
+              '&:hover': {
+                borderColor: '#E5E7EB',
+                bgcolor: 'rgba(239, 68, 68, 0.08)',
+              },
+            }}
+          >
+            Delete selected ({selectedCount})
+          </Button>
         </Box>
       )}
 
@@ -545,22 +636,50 @@ export function OrdersTable({
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    sx={{
-                      minWidth: column.minWidth,
-                      bgcolor: 'black',
-                      color: 'white',
-                      '&.MuiTableCell-stickyHeader': {
+                {columns.map((column) => {
+                  if (column.id === 'select') {
+                    return (
+                      <TableCell
+                        key={column.id}
+                        align={column.align}
+                        padding="checkbox"
+                        sx={{
+                          minWidth: column.minWidth,
+                          bgcolor: 'black',
+                          color: 'white',
+                          '&.MuiTableCell-stickyHeader': {
+                            bgcolor: 'black',
+                          },
+                        }}
+                      >
+                        <Checkbox
+                          checked={allSelectedOnPage}
+                          indeterminate={!allSelectedOnPage && someSelectedOnPage}
+                          onChange={toggleSelectAllOnPage}
+                          size="small"
+                          sx={{ color: 'white' }}
+                        />
+                      </TableCell>
+                    );
+                  }
+
+                  return (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      sx={{
+                        minWidth: column.minWidth,
                         bgcolor: 'black',
-                      },
-                    }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
+                        color: 'white',
+                        '&.MuiTableCell-stickyHeader': {
+                          bgcolor: 'black',
+                        },
+                      }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -572,11 +691,13 @@ export function OrdersTable({
                   page={page}
                   rowsPerPage={rowsPerPage}
                   onViewOrder={handleViewOrder}
+                  selected={selectedOrderIds.has(order._id)}
+                  onToggleSelected={toggleSelected}
                 />
               ))}
               {orders.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                  <TableCell colSpan={9} align="center" sx={{ py: 3 }}>
                     <Typography variant="body2" color="text.secondary">
                       No orders found
                     </Typography>
@@ -605,6 +726,31 @@ export function OrdersTable({
           }}
         />
       </Paper>
+
+      <Dialog open={confirmOpen} onClose={closeConfirm} maxWidth="sm" fullWidth>
+        <DialogTitle>Delete selected orders</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            This will soft-delete {selectedCount} order(s). Type DELETE to confirm.
+          </Typography>
+          <TextField
+            fullWidth
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeConfirm} disabled={isBulkDeleting}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleBulkDelete}
+            disabled={confirmText !== 'DELETE' || isBulkDeleting || selectedCount === 0}
+            sx={{ bgcolor: '#EF4444', '&:hover': { bgcolor: '#DC2626' } }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

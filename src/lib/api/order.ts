@@ -208,6 +208,13 @@ export const resendOrderConfirmation = async (orderId: string): Promise<OrderDet
   });
 };
 
+export const bulkDeleteOrders = async (params: { orderIds: string[]; notes?: string }): Promise<{ data: { matched: number; modified: number }; message: string }> => {
+  return apiClient<{ data: { matched: number; modified: number }; message: string }>(`orders/bulk-delete`, {
+    method: 'PATCH',
+    body: params,
+  });
+};
+
 export const deleteOrder = async (orderId: string): Promise<void> => {
   return apiClient<void>(`orders/${orderId}`, {
     method: 'DELETE',

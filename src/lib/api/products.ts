@@ -241,6 +241,24 @@ export const createProduct = (data: CreateProductDto) => {
   });
 };
 
+export const uploadProductMedia = (productId: string, data: FormData) => {
+  return apiClient<{
+    message: string;
+    data: {
+      downloadUrl?: string;
+      bookCoverArt?: string;
+      downloadEndpoint?: string;
+      product: Product;
+    };
+  }>(`/products/${productId}/upload-media`, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    method: 'POST',
+    body: data,
+  });
+};
+
 export const updateProduct = (id: string, data: Partial<CreateProductDto>) => {
   return apiClient<ProductById>(`/products/${id}`, {
     method: 'PUT',

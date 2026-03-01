@@ -24,6 +24,7 @@ import Image from 'next/image';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useUploadProductMedia } from '@/hooks/products';
 
 const ebookSchema = z.object({
   name: z.string().min(3, 'Ebook name must be at least 3 characters'),
@@ -53,6 +54,11 @@ export function EditEbookModal({
   onSave,
   isLoading,
 }: EditEbookModalProps) {
+  const { mutateAsync: uploadProductMedia, isPending: isUploadingMedia } = useUploadProductMedia();
+
+  const [newCoverImage, setNewCoverImage] = React.useState<File | null>(null);
+  const [newEbookFile, setNewEbookFile] = React.useState<File | null>(null);
+
   const {
     control,
     handleSubmit,
@@ -84,10 +90,13 @@ export function EditEbookModal({
         tags: product.tags?.join(', ') || '',
         order: product.order || 0,
       });
+
+      setNewCoverImage(null);
+      setNewEbookFile(null);
     }
   }, [product, reset]);
 
-  const onSubmit = (data: EditEbookFormData) => {
+  const onSubmit = async (data: EditEbookFormData) => {
     if (product) {
       const tagsArray = data.tags
         ? data.tags
@@ -105,6 +114,17 @@ export function EditEbookModal({
         bundlePrice: undefined,
         bundleTier: undefined,
       };
+
+      if (newCoverImage || newEbookFile) {
+        const mediaFormData = new FormData();
+        if (newCoverImage) {
+          mediaFormData.append('bookCoverArt', newCoverImage);
+        }
+        if (newEbookFile) {
+          mediaFormData.append('downloadUrl', newEbookFile);
+        }
+        await uploadProductMedia({ productId: product._id, data: mediaFormData });
+      }
 
       onSave(updatedProduct as Product);
     }
@@ -129,12 +149,36 @@ export function EditEbookModal({
                     style={{ objectFit: 'cover' }}
                   />
                 </Box>
-                <Typography variant="body2" color="text.secondary">
-                  To update the ebook cover image, please use the Add Inventory
-                  form.
-                </Typography>
               </Box>
             )}
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Typography variant="subtitle2">Replace Ebook File (PDF, EPUB, MOBI)</Typography>
+              <input
+                type="file"
+                accept=".pdf,.epub,.mobi,application/pdf,application/epub+zip,application/x-mobipocket-ebook,application/vnd.amazon.ebook"
+                onChange={(e) => setNewEbookFile(e.target.files?.[0] || null)}
+              />
+              {newEbookFile ? (
+                <Typography variant="caption" color="text.secondary">
+                  Selected: {newEbookFile.name}
+                </Typography>
+              ) : null}
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Typography variant="subtitle2">Replace Cover Image (JPG, PNG)</Typography>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                onChange={(e) => setNewCoverImage(e.target.files?.[0] || null)}
+              />
+              {newCoverImage ? (
+                <Typography variant="caption" color="text.secondary">
+                  Selected: {newCoverImage.name}
+                </Typography>
+              ) : null}
+            </Box>
 
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -309,16 +353,16 @@ export function EditEbookModal({
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} disabled={isLoading}>
+          <Button onClick={onClose} disabled={isLoading || isUploadingMedia}>
             Cancel
           </Button>
           <Button
             type="submit"
             variant="contained"
             sx={{ bgcolor: '#2FD65D', '&:hover': { bgcolor: '#2AC152' } }}
-            disabled={isLoading}
+            disabled={isLoading || isUploadingMedia}
           >
-            {isLoading ? 'Saving...' : 'Save Changes'}
+            {isLoading || isUploadingMedia ? 'Saving...' : 'Save Changes'}
           </Button>
         </DialogActions>
       </form>

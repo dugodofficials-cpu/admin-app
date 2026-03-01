@@ -1,4 +1,4 @@
-import { AlbumCover, AlbumCoverResponse, createProduct, CreateProductDto, deleteAlbumCover, deleteProduct, getAlbumCovers, getDigitalAlbums, getProductById, getProducts, getProductsByAlbum, PaginatedDigitalProducts, PaginatedProducts, ProductById, ProductsQueryParams, updateAlbumCover, updateProduct, uploadAlbumCover } from '@/lib/api/products';
+import { AlbumCover, AlbumCoverResponse, createProduct, CreateProductDto, deleteAlbumCover, deleteProduct, getAlbumCovers, getDigitalAlbums, getProductById, getProducts, getProductsByAlbum, PaginatedDigitalProducts, PaginatedProducts, ProductById, ProductsQueryParams, updateAlbumCover, updateProduct, uploadAlbumCover, uploadProductMedia } from '@/lib/api/products';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
@@ -13,6 +13,32 @@ export const useDigitalProducts = (params: ProductsQueryParams = {}) => {
         enqueueSnackbar((error as Error).message || 'Failed to fetch digital products', { variant: 'error' });
         throw error;
       }
+    },
+  });
+};
+
+export const useUploadProductMedia = () => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    {
+      message: string;
+      data: {
+        downloadUrl?: string;
+        bookCoverArt?: string;
+        downloadEndpoint?: string;
+        product: unknown;
+      };
+    },
+    Error,
+    { productId: string; data: FormData }
+  >({
+    mutationFn: ({ productId, data }) => uploadProductMedia(productId, data),
+    onError: (error) => {
+      enqueueSnackbar(error.message, { variant: 'error' });
+    },
+    onSuccess: () => {
+      enqueueSnackbar('Ebook updated successfully', { variant: 'success' });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });
 };

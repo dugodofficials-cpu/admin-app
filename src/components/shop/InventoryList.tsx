@@ -175,23 +175,28 @@ export function InventoryList() {
       description,
       sku,
     } = updatedProduct;
+
+    const updatePayloadBase = {
+      name,
+      price,
+      order,
+      stockQuantity,
+      status,
+      categories,
+      sizes,
+      bundleItems,
+      bundlePrice,
+      bundleTier,
+      tags,
+      description,
+      sku,
+    };
+
     updateProductMutation({
       id: _id,
       data: {
-        images,
-        name,
-        price,
-        order,
-        stockQuantity,
-        status,
-        categories,
-        sizes,
-        bundleItems,
-        bundlePrice,
-        bundleTier,
-        tags,
-        description,
-        sku,
+        ...(updatedProduct.type === ProductType.EBOOK ? {} : { images }),
+        ...updatePayloadBase,
       },
     });
     setEditingProduct(null);

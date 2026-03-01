@@ -119,9 +119,13 @@ export function CreateEbookForm() {
   };
 
   const onSubmit = async (data: EbookFormData) => {
+    const normalizedData: EbookFormData = {
+      ...data,
+      sku: data.sku.trim().toUpperCase(),
+    };
     const formData = new FormData();
 
-    Object.entries(data).forEach(([key, value]) => {
+    Object.entries(normalizedData).forEach(([key, value]) => {
       if (key === 'categories' && Array.isArray(value)) {
         value.forEach((item) => formData.append('categories', item));
       } else if (key === 'images' && Array.isArray(value)) {
@@ -151,7 +155,7 @@ export function CreateEbookForm() {
         setCoverImagePreview(null);
       },
       onError: (error) => {
-        enqueueSnackbar(error.message || 'Failed to create ebook', {
+        enqueueSnackbar(error.message || 'Failed to create ebook. SKU may already exist.', {
           variant: 'error',
         });
       },

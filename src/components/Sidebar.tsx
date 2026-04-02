@@ -76,14 +76,15 @@ export const Sidebar = () => {
       sx={{
         width: 250,
         height: '100vh',
-        bgcolor: '#f9f9f9',
-        borderRight: '1px solid #eaeaea',
+        bgcolor: '#0B1220',
+        borderRight: '1px solid rgba(148, 163, 184, 0.2)',
         position: 'fixed',
         left: 0,
         top: 0,
         p: 3,
         display: 'flex',
         flexDirection: 'column',
+        color: '#E2E8F0',
       }}
     >
       <Box sx={{ mb: 4 }}>
@@ -102,15 +103,26 @@ export const Sidebar = () => {
                   : pathname.startsWith(item.href)
               }
               sx={{
-                borderRadius: 1,
+                borderRadius: 2,
+                color: '#CBD5E1',
+                '&:hover': {
+                  bgcolor: 'rgba(148, 163, 184, 0.14)',
+                  color: '#F8FAFC',
+                  '& .MuiListItemIcon-root': {
+                    color: '#F8FAFC',
+                  },
+                },
+                '& .MuiListItemIcon-root': {
+                  color: '#94A3B8',
+                },
                 '&.Mui-selected': {
-                  bgcolor: '#2FD65D',
-                  color: 'white',
+                  bgcolor: '#22C55E',
+                  color: '#052E16',
                   '&:hover': {
-                    bgcolor: '#2AC152',
+                    bgcolor: '#16A34A',
                   },
                   '& .MuiListItemIcon-root': {
-                    color: 'white',
+                    color: '#052E16',
                   },
                 },
               }}
@@ -130,11 +142,15 @@ export const Sidebar = () => {
             logout.mutate();
           }}
           sx={{
-            borderRadius: 1,
-            color: 'text.secondary',
+            borderRadius: 2,
+            color: '#CBD5E1',
+            '&:hover': {
+              bgcolor: 'rgba(148, 163, 184, 0.14)',
+              color: '#F8FAFC',
+            },
           }}
         >
-          <ListItemIcon sx={{ minWidth: 40 }}>
+          <ListItemIcon sx={{ minWidth: 40, color: '#94A3B8' }}>
             <LogoutIcon />
           </ListItemIcon>
           <ListItemText primary="Log out" />

@@ -192,6 +192,27 @@ export interface CreateProductDto {
   isActive?: boolean;
 }
 
+export interface BulkUploadAlbumTracksResponse {
+  message: string;
+  data: {
+    albumId: string;
+    albumTitle: string;
+    totalReceived: number;
+    createdCount: number;
+    failedCount: number;
+    created: Array<{
+      id: string;
+      name: string;
+      sku: string;
+      order: number;
+    }>;
+    failed: Array<{
+      fileName: string;
+      reason: string;
+    }>;
+  };
+}
+
 export const getDigitalAlbums = async (
   params: ProductsQueryParams = {}
 ): Promise<PaginatedDigitalProducts> => {
@@ -251,6 +272,16 @@ export const uploadProductMedia = (productId: string, data: FormData) => {
       product: Product;
     };
   }>(`/products/${productId}/upload-media`, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    method: 'POST',
+    body: data,
+  });
+};
+
+export const bulkUploadAlbumTracks = (data: FormData) => {
+  return apiClient<BulkUploadAlbumTracksResponse>(`/products/bulk-upload`, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

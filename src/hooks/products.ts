@@ -1,4 +1,4 @@
-import { AlbumCover, AlbumCoverResponse, createProduct, CreateProductDto, deleteAlbumCover, deleteProduct, getAlbumCovers, getDigitalAlbums, getProductById, getProducts, getProductsByAlbum, PaginatedDigitalProducts, PaginatedProducts, ProductById, ProductsQueryParams, updateAlbumCover, updateProduct, uploadAlbumCover, uploadProductMedia } from '@/lib/api/products';
+import { AlbumCover, AlbumCoverResponse, bulkUploadAlbumTracks, BulkUploadAlbumTracksResponse, createProduct, CreateProductDto, deleteAlbumCover, deleteProduct, getAlbumCovers, getDigitalAlbums, getProductById, getProducts, getProductsByAlbum, PaginatedDigitalProducts, PaginatedProducts, ProductById, ProductsQueryParams, updateAlbumCover, updateProduct, uploadAlbumCover, uploadProductMedia } from '@/lib/api/products';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
@@ -39,6 +39,27 @@ export const useUploadProductMedia = () => {
     onSuccess: () => {
       enqueueSnackbar('Ebook updated successfully', { variant: 'success' });
       queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useBulkUploadAlbumTracks = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<BulkUploadAlbumTracksResponse, Error, FormData>({
+    mutationFn: (data) => bulkUploadAlbumTracks(data),
+    onSuccess: (response) => {
+      const hasFailures = response.data.failedCount > 0;
+      enqueueSnackbar(
+        hasFailures
+          ? `Uploaded ${response.data.createdCount} track(s), ${response.data.failedCount} failed.`
+          : `Uploaded ${response.data.createdCount} track(s) successfully.`,
+        { variant: hasFailures ? 'warning' : 'success' },
+      );
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+    onError: (error) => {
+      enqueueSnackbar(error.message, { variant: 'error' });
     },
   });
 };

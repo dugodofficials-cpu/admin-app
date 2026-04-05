@@ -8,6 +8,7 @@ export const ROUTES = {
     MUSIC_MANAGER: {
       HOME: '/music-manager',
       ADD_SINGLE: '/music-manager/add-single',
+      BULK_UPLOAD: '/music-manager/bulk-upload',
     },
     SHOP: {
       HOME: '/shop',

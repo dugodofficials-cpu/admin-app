@@ -28,6 +28,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import Image from 'next/image';
+import { ROUTES } from '@/utils/paths';
 
 interface Column {
   id:
@@ -218,7 +219,7 @@ export default function MusicManagerPage() {
       >
         <Button
           component={Link}
-          href="/music-manager/add-single"
+          href={ROUTES.DASHBOARD.MUSIC_MANAGER.ADD_SINGLE}
           variant="contained"
           startIcon={<AddIcon />}
           sx={{
@@ -230,7 +231,19 @@ export default function MusicManagerPage() {
         </Button>
         <Button
           component={Link}
-          href="/music-manager/album-covers"
+          href={ROUTES.DASHBOARD.MUSIC_MANAGER.BULK_UPLOAD}
+          variant="contained"
+          startIcon={<AddIcon />}
+          sx={{
+            bgcolor: '#2FD65D',
+            '&:hover': { bgcolor: '#2AC152' },
+          }}
+        >
+          Bulk Upload Folder
+        </Button>
+        <Button
+          component={Link}
+          href={`${ROUTES.DASHBOARD.MUSIC_MANAGER.HOME}/album-covers`}
           variant="contained"
           startIcon={<AddIcon />}
           sx={{
